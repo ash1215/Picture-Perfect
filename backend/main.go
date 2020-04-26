@@ -46,6 +46,7 @@ func returnMovies(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Fprintf(w, "%+v", string(reqBody))
 	title := string(reqBody)
+	fmt.Println(title)
 	RequestedMovies = append(RequestedMovies, GetMovieByTitle(title))
 	RequestedMovies = ReadTsv("IMDb Database/title.basics.tsv", title, "movie", RequestedMovies)
 	json.NewEncoder(w).Encode(RequestedMovies)
