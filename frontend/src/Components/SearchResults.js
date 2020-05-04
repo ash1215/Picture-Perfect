@@ -1,14 +1,22 @@
 import React, {useState,useEffect} from 'react';
 import MovieItem from './MovieItem'
 import { Grid } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 function MapItems({results}){
     console.log(results)
-    if(JSON.stringify(results) === "{}") return( <div></div>)
+    if((JSON.stringify(results)).length <= 5) return( <div></div>)
     return(
-        results.map((item,index) => (
-            <MovieItem key={index} movieDetails={item} /> 
-        ))
+        results.map((item,index) => {
+            var linkURL = "/movie"+item.TMDbID
+            console.log("URL",linkURL)
+            return(
+            <Link to={linkURL}>
+                <MovieItem key={index} movieDetails={item} />
+            </Link>
+             
+        )}
+        )
     )
 }
 
@@ -17,10 +25,10 @@ function SearchResults({location}){
     let moviesList = {}
     console.log(location)
     let searchQuery = location.search;
-    searchQuery = searchQuery.replace(searchQuery[0],"")
+    searchQuery = decodeURIComponent(searchQuery.replace(searchQuery[0],""))
     useEffect(() => {
         const fetchMovies = () => {
-            const data = fetch('http://192.168.29.188:8500/api',{
+            const data = fetch('http://192.168.29.57:8500/api',{
                 method: "POST",
                 body: searchQuery
             }).then((res) => res.text())
