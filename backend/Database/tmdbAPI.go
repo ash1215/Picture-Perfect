@@ -171,33 +171,8 @@ func toRequiredJSON(movieInfo []MovieDetails) []Movie {
 	return tempList
 }
 
-func startDB() *sql.DB {
-	const (
-		host     = "localhost"
-		port     = 5432
-		user     = "postgres"
-		password = "12345678"
-		dbname   = "PicturePerfect"
-	)
-	fmt.Println("Connecting to the database")
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+func insertMovies(movieList []Movie, db *sql.DB) {
 
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Successfully connected!")
-
-	return db
-}
-
-func insertMovies(movieList []Movie) *sql.DB {
-	db := startDB()
 	sqlStatement := ""
 	id := 0
 	for i := 0; i < len(movieList); i++ {
@@ -224,12 +199,10 @@ func insertMovies(movieList []Movie) *sql.DB {
 		fmt.Println("New record ID is:", id)
 	}
 	fmt.Printf("Inserted %d rows\n", len(movieList))
-	return db
 
 }
 
 func Result(db *sql.DB, query string) []Movie {
-	defer db.Close()
 	fmt.Println("starting query", query)
 	rows, err := db.Query("SELECT * FROM moviesbasic WHERE title ILIKE '%' || $1 || '%'", query)
 	if err != nil {
@@ -258,7 +231,7 @@ func Result(db *sql.DB, query string) []Movie {
 	return resultList
 }
 
-func SearchTitle(query string) []Movie {
+func SearchTitle(query string, db *sql.DB) []Movie {
 	initMapGenre()
 	APIKey := "317433652d5b6b2fb88b19cd436ee5d6"
 	language := "en-US"
@@ -279,7 +252,7 @@ func SearchTitle(query string) []Movie {
 	fmt.Println("Received Movie List")
 	fmt.Println(len(moveiList.Results))
 	moviesList := toRequiredJSON(moveiList.Results)
-	db := insertMovies(moviesList)
+	insertMovies(moviesList, db)
 	moviesList = Result(db, query)
 	return moviesList
 
