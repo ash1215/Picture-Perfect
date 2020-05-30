@@ -7,8 +7,36 @@ import Grid from '@material-ui/core/Grid';
 import logo from './logowhite.png';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
+import Login from './Login';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { login, logout, getUserInfo } from '../actions';
+
+function LogTab({logInfo,userInfo}) {
+  const dispatch = useDispatch();
+  const user1 = {
+    Name: 'Ashwini',
+    ID: '123'
+  }
+  console.log(logInfo)
+  if(logInfo == true) {
+    return (
+      <Link to="/profile" onClick={() => dispatch(logout())}>
+        <Typography align='left'>{userInfo.Name}</Typography>
+      </Link>
+    )
+  }
+  else {
+    return (
+      <Login/>
+    )
+  }
+}
+
 export default function NavBar() {
 
+  const logInfo = useSelector(state => state.logInfo);
+  const userInfo = useSelector(state => state.userInfo);
   const theme = createMuiTheme({
       palette: {
           primary: {
@@ -53,9 +81,7 @@ export default function NavBar() {
               </Link>
             </Grid>
             <Grid item xs={1}>
-              <Link to="/login">
-              <Typography align='left'>LOGIN</Typography>
-              </Link>
+              <LogTab logInfo = {logInfo} userInfo = {userInfo}/>
             </Grid>
           </Grid>
         </Toolbar>

@@ -2,6 +2,7 @@ import React from 'react';
 import NavBar from './Components/NavBar'
 import SearchResults from './Components/SearchResults'
 import MoviePage from './Components/MoviePage'
+import RegisterPage from './Components/RegisterPage'
 import {
   BrowserRouter as Router,
   Switch,
@@ -15,6 +16,7 @@ function App() {
         <NavBar></NavBar>
         <Route path="/search" component={SearchResults}/>
         <Route path="/movie:id" component={MoviePage} />
+        <Route path="/register" component={RegisterPage} />
       </div>
     </Router>
   );

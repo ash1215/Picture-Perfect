@@ -15,22 +15,9 @@ const (
 	dbname   = "PicturePerfect"
 )
 
-func main() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Successfully connected!")
+func MovieBasicTable(db *sql.DB) {
 	sqlStatement2 := `DROP TABLE moviesbasic`
-	_, err = db.Exec(sqlStatement2)
+	_, err := db.Exec(sqlStatement2)
 	if err != nil {
 		panic(err)
 	}
@@ -55,5 +42,51 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Added Table successfully")
+	fmt.Println("Added Movie Table successfully")
+}
+func UserTable(db *sql.DB) {
+	sqlStatement2 := `DROP TABLE users`
+	_, err := db.Exec(sqlStatement2)
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `CREATE TABLE users (
+		UserID SERIAL,
+		Name TEXT,
+		Email TEXT PRIMARY KEY,
+		Password TEXT,
+		DOB DATE,
+		Phone TEXT UNIQUE,
+		Country TEXT,
+		State TEXT,
+		City TEXT,
+		Street TEXT,
+		PINCODE TEXT,
+		Role TEXT
+	)`
+	_, err = db.Exec(sqlStatement)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Added User Table successfully")
+}
+
+func main() {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Successfully connected!")
+
+	// MovieBasicTable(db);
+	UserTable(db)
+
 }

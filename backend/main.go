@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"reflect"
 
 	Database "./Database"
 
@@ -59,6 +60,15 @@ func returnMovies(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(RequestedMovies)
 	fmt.Println("Sent requested")
 }
+func verifyLogin(w http.ResponseWriter, r *http.Request) {
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	fmt.Fprintf(w, "%+v", string(reqBody))
+	output := Database.VerifyLogin(string(reqBody), db)
+	fmt.Println(reflect.TypeOf(output))
+	fmt.Println(output)
+	json.NewEncoder(w).Encode(output)
+	fmt.Println("Sent requested")
+}
 
 func handleRequests() {
 	header := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
@@ -66,6 +76,7 @@ func handleRequests() {
 	origins := handlers.AllowedOrigins([]string{"*"})
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/api", returnMovies).Methods("POST")
+	myRouter.HandleFunc("/verifylogin", verifyLogin).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8500", handlers.CORS(header, methods, origins)(myRouter)))
 }
 
